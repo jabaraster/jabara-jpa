@@ -29,6 +29,13 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- -->
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.1-901.jdbc4</version>
+		</dependency>
+
 		<!-- for test -->
 		<dependency>
 			<groupId>junit</groupId>
