@@ -22,11 +22,11 @@ public class SystemPropertyToPostgreJpaPropertiesParser implements IProducer<Map
     /**
      * 
      */
-    public static final String KEY_DATABASE_URL           = "database.url";                                    //$NON-NLS-1$
+    public static final String KEY_DATABASE_URL           = "database.url";          //$NON-NLS-1$
     /**
      * 
      */
-    public static final String KEY_HIBERNATE_HBM2DDL_AUTO = PersistenceXmlPropertyNames.Hibernate.HBM2DDL_AUTO;
+    public static final String ENV_HIBERNATE_HBM2DDL_AUTO = "HIBERNATE_HBM2DDL_AUTO"; //$NON-NLS-1$
 
     /**
      * @see jabara.general.IProducer#produce()
@@ -35,8 +35,11 @@ public class SystemPropertyToPostgreJpaPropertiesParser implements IProducer<Map
     public Map<String, String> produce() {
         final String databaseUrl = System.getProperty(KEY_DATABASE_URL);
         if (databaseUrl == null) {
+            final Map<String, String> ret = new HashMap<String, String>();
+            ret.put(PersistenceXmlPropertyNames.DRIVER, Driver.class.getName());
             return Collections.emptyMap();
         }
+
         try {
             final URI dbUri = new URI(databaseUrl);
 
@@ -51,7 +54,7 @@ public class SystemPropertyToPostgreJpaPropertiesParser implements IProducer<Map
             ret.put(PersistenceXmlPropertyNames.JDBC_USER, credential.getUserName());
             ret.put(PersistenceXmlPropertyNames.JDBC_PASSWORD, credential.getPassword());
 
-            final String hbm2ddl = System.getProperty(KEY_HIBERNATE_HBM2DDL_AUTO);
+            final String hbm2ddl = System.getenv(ENV_HIBERNATE_HBM2DDL_AUTO);
             if (hbm2ddl != null) {
                 ret.put(PersistenceXmlPropertyNames.Hibernate.HBM2DDL_AUTO, hbm2ddl);
             }
