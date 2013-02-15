@@ -133,6 +133,14 @@ public abstract class EntityBase<E extends EntityBase<E>> implements IEntity, Se
     }
 
     /**
+     * @return インスタンスが永続化されていればtrue. <br>
+     *         実装的にはidフィールドが非nullの時に永続されていると判断しています. <br>
+     */
+    public boolean isPersisted() {
+        return this.id != null;
+    }
+
+    /**
      * 
      */
     @PrePersist
