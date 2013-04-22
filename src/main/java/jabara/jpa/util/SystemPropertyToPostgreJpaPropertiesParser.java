@@ -12,8 +12,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.postgresql.Driver;
-
 /**
  * @author jabaraster
  */
@@ -22,11 +20,13 @@ public class SystemPropertyToPostgreJpaPropertiesParser implements IProducer<Map
     /**
      * 
      */
-    public static final String KEY_DATABASE_URL           = "database.url";          //$NON-NLS-1$
+    public static final String  KEY_DATABASE_URL           = "database.url";          //$NON-NLS-1$
     /**
      * 
      */
-    public static final String ENV_HIBERNATE_HBM2DDL_AUTO = "HIBERNATE_HBM2DDL_AUTO"; //$NON-NLS-1$
+    public static final String  ENV_HIBERNATE_HBM2DDL_AUTO = "HIBERNATE_HBM2DDL_AUTO"; //$NON-NLS-1$
+
+    private static final String POSTGRE_DRIVER_NAME        = "org.postgresql.Driver"; //$NON-NLS-1$
 
     /**
      * @see jabara.general.IProducer#produce()
@@ -35,8 +35,6 @@ public class SystemPropertyToPostgreJpaPropertiesParser implements IProducer<Map
     public Map<String, String> produce() {
         final String databaseUrl = System.getProperty(KEY_DATABASE_URL);
         if (databaseUrl == null) {
-            final Map<String, String> ret = new HashMap<String, String>();
-            ret.put(PersistenceXmlPropertyNames.DRIVER, Driver.class.getName());
             return Collections.emptyMap();
         }
 
@@ -49,7 +47,7 @@ public class SystemPropertyToPostgreJpaPropertiesParser implements IProducer<Map
             final String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + dbUri.getPath() + ":" + dbUri.getPort(); //$NON-NLS-1$ //$NON-NLS-2$
 
             final Map<String, String> ret = new HashMap<String, String>();
-            ret.put(PersistenceXmlPropertyNames.DRIVER, Driver.class.getName());
+            ret.put(PersistenceXmlPropertyNames.DRIVER, POSTGRE_DRIVER_NAME);
             ret.put(PersistenceXmlPropertyNames.JDBC_URL, dbUrl);
             ret.put(PersistenceXmlPropertyNames.JDBC_USER, credential.getUserName());
             ret.put(PersistenceXmlPropertyNames.JDBC_PASSWORD, credential.getPassword());
