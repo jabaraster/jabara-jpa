@@ -85,11 +85,13 @@ public class JpaDaoBase implements Serializable {
 
         final List<Order> ret = new ArrayList<Order>();
         for (final Sort s : pSort) {
+            final Order order;
             if (s.getSortRule() == SortRule.ASC) {
-                pCriteriaBuilder.asc(pPath.get(s.getColumnName()));
+                order = pCriteriaBuilder.asc(pPath.get(s.getColumnName()));
             } else {
-                pCriteriaBuilder.desc(pPath.get(s.getColumnName()));
+                order = pCriteriaBuilder.desc(pPath.get(s.getColumnName()));
             }
+            ret.add(order);
         }
         return ret;
     }

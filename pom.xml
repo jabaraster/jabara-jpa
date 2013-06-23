@@ -4,7 +4,7 @@
 
 	<groupId>jabaraster</groupId>
 	<artifactId>jabara-jpa</artifactId>
-	<version>1.4</version>
+	<version>1.5</version>
 	<packaging>jar</packaging>
 
 	<name>jabara-jpa</name>
@@ -29,12 +29,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- -->
-		<dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.1-901.jdbc4</version>
-		</dependency>
 
 		<!-- for test -->
 		<dependency>
