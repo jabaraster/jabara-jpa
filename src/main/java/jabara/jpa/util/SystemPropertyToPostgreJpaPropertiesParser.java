@@ -18,13 +18,13 @@ public class SystemPropertyToPostgreJpaPropertiesParser implements IProducer<Map
     /**
      * 
      */
-    public static final String  KEY_DATABASE_URL           = "database.url";          //$NON-NLS-1$
+    public static final String  KEY_DATABASE_URL           = "database.url";                                    //$NON-NLS-1$
     /**
      * 
      */
-    public static final String  ENV_HIBERNATE_HBM2DDL_AUTO = "HIBERNATE_HBM2DDL_AUTO"; //$NON-NLS-1$
+    public static final String  ENV_HIBERNATE_HBM2DDL_AUTO = PersistenceXmlPropertyNames.Hibernate.HBM2DDL_AUTO;
 
-    private static final String POSTGRE_DRIVER_NAME        = "org.postgresql.Driver"; //$NON-NLS-1$
+    private static final String POSTGRE_DRIVER_NAME        = "org.postgresql.Driver";                           //$NON-NLS-1$
 
     /**
      * @see jabara.general.IProducer#produce()

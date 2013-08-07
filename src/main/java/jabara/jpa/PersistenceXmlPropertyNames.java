@@ -43,6 +43,10 @@ public final class PersistenceXmlPropertyNames {
          * JPAエンティティの定義に従ってDBのスキーマを作り替える場合に指定するプロパティの値です. <br>
          */
         public static final String HBM2DDL_AUTO_VALUE_CREATE_DROP = "create-drop";           //$NON-NLS-1$
+        /**
+         * JPAエンティティの定義に従ってDBのスキーマを作り替える場合に指定するプロパティの値です. <br>
+         */
+        public static final String HBM2DDL_AUTO_VALUE_NONE        = "none";                  //$NON-NLS-1$
 
         private Hibernate() {
             // 処理なし
