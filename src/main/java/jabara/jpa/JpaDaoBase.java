@@ -18,6 +18,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
@@ -72,14 +73,33 @@ public class JpaDaoBase implements Serializable {
     }
 
     /**
-     * ソート条件を型変換します.
+     * <<<<<<< HEAD =======
+     * 
+     * @param pSort -
+     * @param pCriteriaBuilder -
+     * @param pPath -
+     * @return -
+     */
+    public static Order convertOrder(final Sort pSort, final CriteriaBuilder pCriteriaBuilder, final Path<?> pPath) {
+        ArgUtil.checkNull(pSort, "pSort"); //$NON-NLS-1$
+        ArgUtil.checkNull(pCriteriaBuilder, "pCriteriaBuilder"); //$NON-NLS-1$
+        ArgUtil.checkNull(pPath, "pPath"); //$NON-NLS-1$
+
+        if (pSort.getSortRule() == SortRule.ASC) {
+            return pCriteriaBuilder.asc(pPath.get(pSort.getColumnName()));
+        }
+        return pCriteriaBuilder.desc(pPath.get(pSort.getColumnName()));
+    }
+
+    /**
+     * >>>>>>> 47229b324574a7d5104ba5556830fcf65d29a1bc ソート条件を型変換します.
      * 
      * @param pSort -
      * @param pCriteriaBuilder -
      * @param pPath -
      * @return 変換後のソート条件.
      */
-    public static List<Order> convertOrder(final Iterable<Sort> pSort, final CriteriaBuilder pCriteriaBuilder, final Path<?> pPath) {
+    public static List<Order> convertOrders(final Iterable<Sort> pSort, final CriteriaBuilder pCriteriaBuilder, final Path<?> pPath) {
         ArgUtil.checkNull(pSort, "pSort"); //$NON-NLS-1$
         ArgUtil.checkNull(pCriteriaBuilder, "pCriteriaBuilder"); //$NON-NLS-1$
 
@@ -97,7 +117,30 @@ public class JpaDaoBase implements Serializable {
     }
 
     /**
-     * 結果が高々１件のクエリを実行して結果を返します. <br>
+     * <<<<<<< HEAD =======
+     * 
+     * @param pValue -
+     * @param pParameterName -
+     * @return -
+     */
+    public static int convertToInt(final long pValue, final String pParameterName) {
+        if (pValue > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException(pParameterName + " is over Interger.MAX_VALUE. value -> " + pValue); //$NON-NLS-1$
+        }
+        return (int) pValue;
+    }
+
+    /**
+     * @param pCriteriaBuilder -
+     * @return -
+     */
+    public static Expression<String> getDummyExpression(final CriteriaBuilder pCriteriaBuilder) {
+        ArgUtil.checkNull(pCriteriaBuilder, "pCriteriaBuilder"); //$NON-NLS-1$
+        return pCriteriaBuilder.literal("X"); //$NON-NLS-1$
+    }
+
+    /**
+     * >>>>>>> 47229b324574a7d5104ba5556830fcf65d29a1bc 結果が高々１件のクエリを実行して結果を返します. <br>
      * 
      * @param pQuery クエリオブジェクト.
      * @param <E> 結果オブジェクトの型.
@@ -109,6 +152,46 @@ public class JpaDaoBase implements Serializable {
             return pQuery.getSingleResult();
         } catch (final NoResultException e) {
             throw NotFound.GLOBAL;
+        }
+    }
+
+    /**
+     * @author jabaraster
+     */
+    public static class WhereBuilder {
+
+        private final List<Predicate> predicates = new ArrayList<Predicate>();
+
+        /**
+         * @param pPredicate -
+         * @return -
+         */
+        public WhereBuilder add(final Predicate pPredicate) {
+            ArgUtil.checkNull(pPredicate, "pPredicate"); //$NON-NLS-1$
+            this.predicates.add(pPredicate);
+            return this;
+        }
+
+        /**
+         * pConditionがtrueのときにpPredicateを条件に加えます.
+         * 
+         * @param pCondition -
+         * @param pPredicate -
+         * @return -
+         */
+        public WhereBuilder addIf(final boolean pCondition, final Predicate pPredicate) {
+            ArgUtil.checkNull(pPredicate, "pPredicate"); //$NON-NLS-1$
+            if (pCondition) {
+                this.predicates.add(pPredicate);
+            }
+            return this;
+        }
+
+        /**
+         * @return -
+         */
+        public Predicate[] build() {
+            return this.predicates.toArray(new Predicate[this.predicates.size()]);
         }
     }
 }

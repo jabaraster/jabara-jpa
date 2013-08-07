@@ -8,7 +8,6 @@ import jabara.jpa.PersistenceXmlPropertyNames;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +15,6 @@ import java.util.Map;
  * @author jabaraster
  */
 public class SystemPropertyToPostgreJpaPropertiesParser implements IProducer<Map<String, String>> {
-
     /**
      * 
      */
@@ -33,9 +31,12 @@ public class SystemPropertyToPostgreJpaPropertiesParser implements IProducer<Map
      */
     @Override
     public Map<String, String> produce() {
+        final Map<String, String> ret = new HashMap<String, String>();
+        putHbm2Ddl(ret);
+
         final String databaseUrl = System.getProperty(KEY_DATABASE_URL);
         if (databaseUrl == null) {
-            return Collections.emptyMap();
+            return ret;
         }
 
         try {
@@ -45,17 +46,10 @@ public class SystemPropertyToPostgreJpaPropertiesParser implements IProducer<Map
             final Credential credential = parseCredential(userInfo);
 
             final String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + dbUri.getPath() + ":" + dbUri.getPort(); //$NON-NLS-1$ //$NON-NLS-2$
-
-            final Map<String, String> ret = new HashMap<String, String>();
             ret.put(PersistenceXmlPropertyNames.DRIVER, POSTGRE_DRIVER_NAME);
             ret.put(PersistenceXmlPropertyNames.JDBC_URL, dbUrl);
             ret.put(PersistenceXmlPropertyNames.JDBC_USER, credential.getUserName());
             ret.put(PersistenceXmlPropertyNames.JDBC_PASSWORD, credential.getPassword());
-
-            final String hbm2ddl = System.getenv(ENV_HIBERNATE_HBM2DDL_AUTO);
-            if (hbm2ddl != null) {
-                ret.put(PersistenceXmlPropertyNames.Hibernate.HBM2DDL_AUTO, hbm2ddl);
-            }
 
             return ret;
 
@@ -90,6 +84,16 @@ public class SystemPropertyToPostgreJpaPropertiesParser implements IProducer<Map
         return new Credential(userName, password);
     }
 
+    private static void putHbm2Ddl(final Map<String, String> ret) {
+        String hbm2ddl = System.getProperty(ENV_HIBERNATE_HBM2DDL_AUTO);
+        if (hbm2ddl == null) {
+            hbm2ddl = System.getenv(ENV_HIBERNATE_HBM2DDL_AUTO);
+        }
+        if (hbm2ddl != null) {
+            ret.put(PersistenceXmlPropertyNames.Hibernate.HBM2DDL_AUTO, hbm2ddl);
+        }
+    }
+
     private static final class Credential {
         private static final Credential ANONYMOUS = new Credential("", ""); //$NON-NLS-1$//$NON-NLS-2$
 
@@ -108,7 +112,5 @@ public class SystemPropertyToPostgreJpaPropertiesParser implements IProducer<Map
         String getUserName() {
             return this.userName;
         }
-
     }
-
 }
