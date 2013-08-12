@@ -73,26 +73,27 @@ public class JpaDaoBase implements Serializable {
     }
 
     /**
-     * <<<<<<< HEAD =======
+     * ソート条件を型変換します.
      * 
      * @param pSort -
      * @param pCriteriaBuilder -
      * @param pPath -
-     * @return -
+     * @return 変換後のソート条件.
      */
     public static Order convertOrder(final Sort pSort, final CriteriaBuilder pCriteriaBuilder, final Path<?> pPath) {
         ArgUtil.checkNull(pSort, "pSort"); //$NON-NLS-1$
         ArgUtil.checkNull(pCriteriaBuilder, "pCriteriaBuilder"); //$NON-NLS-1$
         ArgUtil.checkNull(pPath, "pPath"); //$NON-NLS-1$
 
+        final Path<?> exp = relolvePath(pSort.getColumnName(), pPath);
         if (pSort.getSortRule() == SortRule.ASC) {
-            return pCriteriaBuilder.asc(pPath.get(pSort.getColumnName()));
+            return pCriteriaBuilder.asc(exp);
         }
-        return pCriteriaBuilder.desc(pPath.get(pSort.getColumnName()));
+        return pCriteriaBuilder.desc(exp);
     }
 
     /**
-     * >>>>>>> 47229b324574a7d5104ba5556830fcf65d29a1bc ソート条件を型変換します.
+     * ソート条件を型変換します.
      * 
      * @param pSort -
      * @param pCriteriaBuilder -
@@ -117,8 +118,6 @@ public class JpaDaoBase implements Serializable {
     }
 
     /**
-     * <<<<<<< HEAD =======
-     * 
      * @param pValue -
      * @param pParameterName -
      * @return -
@@ -140,7 +139,7 @@ public class JpaDaoBase implements Serializable {
     }
 
     /**
-     * >>>>>>> 47229b324574a7d5104ba5556830fcf65d29a1bc 結果が高々１件のクエリを実行して結果を返します. <br>
+     * 結果が高々１件のクエリを実行して結果を返します. <br>
      * 
      * @param pQuery クエリオブジェクト.
      * @param <E> 結果オブジェクトの型.
@@ -153,6 +152,14 @@ public class JpaDaoBase implements Serializable {
         } catch (final NoResultException e) {
             throw NotFound.GLOBAL;
         }
+    }
+
+    private static Path<?> relolvePath(final String pColumnNames, final Path<?> pRoot) {
+        Path<?> path = pRoot;
+        for (final String columnName : pColumnNames.split("\\.")) {
+            path = path.get(columnName);
+        }
+        return path;
     }
 
     /**
