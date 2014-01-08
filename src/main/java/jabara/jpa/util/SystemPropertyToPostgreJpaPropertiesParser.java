@@ -18,13 +18,9 @@ public class SystemPropertyToPostgreJpaPropertiesParser implements IProducer<Map
     /**
      * 
      */
-    public static final String  KEY_DATABASE_URL           = "database.url";          //$NON-NLS-1$
-    /**
-     * 
-     */
-    public static final String  ENV_HIBERNATE_HBM2DDL_AUTO = "HIBERNATE_HBM2DDL_AUTO"; //$NON-NLS-1$
+    public static final String  KEY_DATABASE_URL    = "database.url";         //$NON-NLS-1$
 
-    private static final String POSTGRE_DRIVER_NAME        = "org.postgresql.Driver"; //$NON-NLS-1$
+    private static final String POSTGRE_DRIVER_NAME = "org.postgresql.Driver"; //$NON-NLS-1$
 
     /**
      * @see jabara.general.IProducer#produce()
@@ -85,9 +81,9 @@ public class SystemPropertyToPostgreJpaPropertiesParser implements IProducer<Map
     }
 
     private static void putHbm2Ddl(final Map<String, String> ret) {
-        String hbm2ddl = System.getProperty(ENV_HIBERNATE_HBM2DDL_AUTO);
+        String hbm2ddl = System.getProperty(PersistenceXmlPropertyNames.Hibernate.HBM2DDL_AUTO);
         if (hbm2ddl == null) {
-            hbm2ddl = System.getenv(ENV_HIBERNATE_HBM2DDL_AUTO);
+            hbm2ddl = System.getenv(PersistenceXmlPropertyNames.Hibernate.HBM2DDL_AUTO);
         }
         if (hbm2ddl != null) {
             ret.put(PersistenceXmlPropertyNames.Hibernate.HBM2DDL_AUTO, hbm2ddl);
