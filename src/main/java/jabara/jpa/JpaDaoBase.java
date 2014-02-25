@@ -73,27 +73,26 @@ public class JpaDaoBase implements Serializable {
     }
 
     /**
-     * <<<<<<< HEAD =======
+     * ソート条件を型変換します.
      * 
      * @param pSort -
      * @param pCriteriaBuilder -
      * @param pPath -
-     * @return -
+     * @return 変換後のソート条件.
      */
     public static Order convertOrder(final Sort pSort, final CriteriaBuilder pCriteriaBuilder, final Path<?> pPath) {
         ArgUtil.checkNull(pSort, "pSort"); //$NON-NLS-1$
         ArgUtil.checkNull(pCriteriaBuilder, "pCriteriaBuilder"); //$NON-NLS-1$
         ArgUtil.checkNull(pPath, "pPath"); //$NON-NLS-1$
 
+        final Path<?> exp = resolvePath(pSort.getColumnName(), pPath);
         if (pSort.getSortRule() == SortRule.ASC) {
-            return pCriteriaBuilder.asc(pPath.get(pSort.getColumnName()));
+            return pCriteriaBuilder.asc(exp);
         }
-        return pCriteriaBuilder.desc(pPath.get(pSort.getColumnName()));
+        return pCriteriaBuilder.desc(exp);
     }
 
     /**
-     * >>>>>>> 47229b324574a7d5104ba5556830fcf65d29a1bc ソート条件を型変換します.
-     * 
      * @param pSort -
      * @param pCriteriaBuilder -
      * @param pPath -
@@ -105,20 +104,12 @@ public class JpaDaoBase implements Serializable {
 
         final List<Order> ret = new ArrayList<Order>();
         for (final Sort s : pSort) {
-            final Order order;
-            if (s.getSortRule() == SortRule.ASC) {
-                order = pCriteriaBuilder.asc(pPath.get(s.getColumnName()));
-            } else {
-                order = pCriteriaBuilder.desc(pPath.get(s.getColumnName()));
-            }
-            ret.add(order);
+            ret.add(convertOrder(s, pCriteriaBuilder, pPath));
         }
         return ret;
     }
 
     /**
-     * <<<<<<< HEAD =======
-     * 
      * @param pValue -
      * @param pParameterName -
      * @return -
@@ -153,6 +144,14 @@ public class JpaDaoBase implements Serializable {
         } catch (final NoResultException e) {
             throw NotFound.GLOBAL;
         }
+    }
+
+    private static Path<?> resolvePath(final String pColumnNames, final Path<?> pRoot) {
+        Path<?> path = pRoot;
+        for (final String columnName : pColumnNames.split("\\.")) { //$NON-NLS-1$
+            path = path.get(columnName);
+        }
+        return path;
     }
 
     /**
