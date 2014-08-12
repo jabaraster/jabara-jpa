@@ -4,7 +4,7 @@
 
     <groupId>jabaraster</groupId>
     <artifactId>jabara-jpa</artifactId>
-    <version>1.6.3</version>
+    <version>1.7.0</version>
     <packaging>jar</packaging>
 
     <name>jabara-jpa</name>
@@ -24,7 +24,7 @@
         <dependency>
             <groupId>jabaraster</groupId>
             <artifactId>jabara-general</artifactId>
-            <version>1.2</version>
+            <version>1.7.1</version>
         </dependency>
 
         <dependency>
