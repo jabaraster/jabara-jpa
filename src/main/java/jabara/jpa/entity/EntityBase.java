@@ -144,7 +144,7 @@ public abstract class EntityBase<E extends EntityBase<E>> implements IEntity, Se
      * 
      */
     @PrePersist
-    void prePersist() {
+    protected void prePersist() {
         this.created = Calendar.getInstance().getTime();
         this.updated = new Date(this.created.getTime());
     }
@@ -153,7 +153,7 @@ public abstract class EntityBase<E extends EntityBase<E>> implements IEntity, Se
      * 
      */
     @PreUpdate
-    void preUpdate() {
+    protected void preUpdate() {
         this.updated = Calendar.getInstance().getTime();
     }
 

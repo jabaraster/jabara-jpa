@@ -7,6 +7,7 @@ import jabara.general.ArgUtil;
 import jabara.general.NotFound;
 import jabara.general.Sort;
 import jabara.general.SortRule;
+import jabara.jpa.entity.EntityBase;
 import jabara.jpa.entity.IEntity;
 
 import java.io.Serializable;
@@ -18,10 +19,13 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.SingularAttribute;
 
 /**
  * @author jabaraster
@@ -45,6 +49,66 @@ public class JpaDaoBase implements Serializable {
     public JpaDaoBase(final EntityManagerFactory pEntityManagerFactory) {
         ArgUtil.checkNull(pEntityManagerFactory, "pEntityManagerFactory"); //$NON-NLS-1$
         this.emf = pEntityManagerFactory;
+    }
+
+    /**
+     * @param pEntityType チェック対象エンティティの型.
+     * @param pCheckProperty -
+     * @param pValue -
+     * @param <E> チェック対象エンティティの型.
+     * @return 重複データが存在すればtrue.
+     */
+    public <E extends EntityBase<E>> boolean existsDuplicationForInsert( //
+            final Class<E> pEntityType //
+            , final SingularAttribute<E, String> pCheckProperty //
+            , final String pValue //
+    ) {
+
+        ArgUtil.checkNull(pEntityType, "pEntityType"); //$NON-NLS-1$
+        ArgUtil.checkNull(pCheckProperty, "pCheckProperty"); //$NON-NLS-1$
+
+        final EntityManager em = getEntityManager();
+        final CriteriaBuilder builder = em.getCriteriaBuilder();
+        final CriteriaQuery<String> query = builder.createQuery(String.class);
+        final Root<E> root = query.from(pEntityType);
+
+        selectDummy(builder, query);
+        query.where(builder.equal(root.get(pCheckProperty), pValue));
+
+        return doCheckDuplication(em.createQuery(query));
+    }
+
+    /**
+     * @param pEntityType チェック対象エンティティの型.
+     * @param pUpdateEntityId -
+     * @param pCheckProperty -
+     * @param pValue -
+     * @param <E> チェック対象エンティティの型.
+     * @param <V> 重複チェック対象の値の型.
+     * @return 重複データが存在すればtrue.
+     */
+    public <E extends EntityBase<E>, V> boolean existsDuplicationForUpdate( //
+            final Class<E> pEntityType //
+            , final long pUpdateEntityId //
+            , final SingularAttribute<E, V> pCheckProperty //
+            , final V pValue //
+    ) {
+
+        ArgUtil.checkNull(pEntityType, "pEntityType"); //$NON-NLS-1$
+        ArgUtil.checkNull(pCheckProperty, "pCheckProperty"); //$NON-NLS-1$
+
+        final EntityManager em = getEntityManager();
+        final CriteriaBuilder builder = em.getCriteriaBuilder();
+        final CriteriaQuery<String> query = builder.createQuery(String.class);
+        final Root<E> root = query.from(pEntityType);
+
+        selectDummy(builder, query);
+        query.where( //
+                builder.notEqual(root.get("id"), Long.valueOf(pUpdateEntityId)) // //$NON-NLS-1$
+                , builder.equal(root.get(pCheckProperty), pValue) //
+        );
+
+        return doCheckDuplication(em.createQuery(query));
     }
 
     /**
@@ -131,7 +195,7 @@ public class JpaDaoBase implements Serializable {
     }
 
     /**
-     * >>>>>>> 47229b324574a7d5104ba5556830fcf65d29a1bc 結果が高々１件のクエリを実行して結果を返します. <br>
+     * 結果が高々１件のクエリを実行して結果を返します. <br>
      * 
      * @param pQuery クエリオブジェクト.
      * @param <E> 結果オブジェクトの型.
@@ -146,12 +210,28 @@ public class JpaDaoBase implements Serializable {
         }
     }
 
+    private static <V> boolean doCheckDuplication( //
+            final TypedQuery<?> pQuery //
+    ) {
+        try {
+            pQuery.getSingleResult();
+            // 重複有り(チェックNG)
+            return false;
+        } catch (final NoResultException e) {
+            return true;
+        }
+    }
+
     private static Path<?> resolvePath(final String pColumnNames, final Path<?> pRoot) {
         Path<?> path = pRoot;
         for (final String columnName : pColumnNames.split("\\.")) { //$NON-NLS-1$
             path = path.get(columnName);
         }
         return path;
+    }
+
+    private static void selectDummy(final CriteriaBuilder pCriteriaBuilder, final CriteriaQuery<String> pQuery) {
+        pQuery.select(pCriteriaBuilder.literal("X").alias("DUMMY")); //$NON-NLS-1$//$NON-NLS-2$
     }
 
     /**
