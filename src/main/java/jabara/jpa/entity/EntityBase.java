@@ -156,5 +156,4 @@ public abstract class EntityBase<E extends EntityBase<E>> implements IEntity, Se
     protected void preUpdate() {
         this.updated = Calendar.getInstance().getTime();
     }
-
 }
