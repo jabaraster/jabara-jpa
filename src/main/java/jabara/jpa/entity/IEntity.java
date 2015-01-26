@@ -6,9 +6,10 @@ package jabara.jpa.entity;
 import java.util.Date;
 
 /**
+ * @param <E> エンティティの型.
  * @author jabaraster
  */
-public interface IEntity {
+public interface IEntity<E extends IEntity<E>> {
 
     /**
      * @return 生成日.
@@ -16,9 +17,9 @@ public interface IEntity {
     Date getCreated();
 
     /**
-     * @return ID値. 永続化前の場合はnull.
+     * @return ID値.
      */
-    Long getId();
+    Id<E> getId();
 
     /**
      * @return 最終更新日.

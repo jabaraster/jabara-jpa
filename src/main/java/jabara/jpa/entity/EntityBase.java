@@ -28,7 +28,7 @@ import javax.persistence.TemporalType;
  * @author jabaraster
  */
 @MappedSuperclass
-public abstract class EntityBase<E extends EntityBase<E>> implements IEntity, Serializable {
+public abstract class EntityBase<E extends EntityBase<E>> implements IEntity<E>, Serializable {
     private static final long serialVersionUID = -5409088539861769452L;
 
     /**
@@ -108,9 +108,11 @@ public abstract class EntityBase<E extends EntityBase<E>> implements IEntity, Se
     /**
      * @see jabara.jpa.entity.IEntity#getId()
      */
-    @Override
-    public Long getId() {
-        return this.id;
+    public jabara.jpa.entity.Id<E> getId() {
+        if (this.id == null) {
+            throw new IllegalStateException("not persisted."); //$NON-NLS-1$
+        }
+        return new jabara.jpa.entity.Id<E>(this.id.longValue());
     }
 
     /**

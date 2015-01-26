@@ -9,6 +9,7 @@ import jabara.general.Sort;
 import jabara.general.SortRule;
 import jabara.jpa.entity.EntityBase;
 import jabara.jpa.entity.IEntity;
+import jabara.jpa.entity.Id;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -120,9 +121,11 @@ public class JpaDaoBase implements Serializable {
      * @return エンティティオブジェクト.
      * @throws NotFound 該当エンティティがない場合.
      */
-    public <E extends IEntity> E findByIdCore(final Class<E> pEntityType, final long pId) throws NotFound {
+    public <E extends IEntity<E>> E getByIdCore(final Class<E> pEntityType, final Id<E> pId) throws NotFound {
         ArgUtil.checkNull(pEntityType, "pEntityType"); //$NON-NLS-1$
-        final E ret = getEntityManager().find(pEntityType, Long.valueOf(pId));
+        ArgUtil.checkNull(pId, "pId"); //$NON-NLS-1$
+
+        final E ret = getEntityManager().find(pEntityType, pId.getValueAsObject());
         if (ret == null) {
             throw NotFound.GLOBAL;
         }
