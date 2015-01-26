@@ -24,12 +24,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * @param <E> エンティティの型.
+ * @param <E> -
  * @author jabaraster
  */
 @MappedSuperclass
 public abstract class EntityBase<E extends EntityBase<E>> implements IEntity<E>, Serializable {
-    private static final long serialVersionUID = -5409088539861769452L;
+    private static final long serialVersionUID = -6285769975070008758L;
 
     /**
      * 
@@ -106,9 +106,9 @@ public abstract class EntityBase<E extends EntityBase<E>> implements IEntity<E>,
     }
 
     /**
-     * @see jabara.jpa.entity.IEntity#getId()
+     * @see jabara.jpa.entity.IEntity#getIdValue()
      */
-    public jabara.jpa.entity.Id<E> getId() {
+    public jabara.jpa.entity.Id<E> getIdValue() {
         if (this.id == null) {
             throw new IllegalStateException("not persisted."); //$NON-NLS-1$
         }

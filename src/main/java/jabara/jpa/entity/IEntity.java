@@ -19,7 +19,7 @@ public interface IEntity<E extends IEntity<E>> {
     /**
      * @return ID値.
      */
-    Id<E> getId();
+    Id<E> getIdValue();
 
     /**
      * @return 最終更新日.
