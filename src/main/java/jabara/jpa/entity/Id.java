@@ -51,7 +51,7 @@ public class Id<E extends IEntity<E>> implements Serializable {
     }
 
     /**
-     * @return -
+     * @return nullを返すことは決してありません.
      */
     public Long getValueAsObject() {
         return Long.valueOf(this.value);

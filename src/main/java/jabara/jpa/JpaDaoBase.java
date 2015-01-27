@@ -13,7 +13,9 @@ import jabara.jpa.entity.Id;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -211,6 +213,22 @@ public class JpaDaoBase implements Serializable {
         } catch (final NoResultException e) {
             throw NotFound.GLOBAL;
         }
+    }
+
+    /**
+     * @param pEntities -
+     * @return -
+     */
+    public static <E extends IEntity<E>> Map<Id<E>, E> toMap(final List<E> pEntities) {
+        ArgUtil.checkNull(pEntities, "pEntities"); //$NON-NLS-1$
+        final Map<Id<E>, E> ret = new HashMap<Id<E>, E>(pEntities.size());
+        for (final E entity : pEntities) {
+            if (entity == null) {
+                throw new IllegalArgumentException("cannot process null."); //$NON-NLS-1$
+            }
+            ret.put(entity.getId(), entity);
+        }
+        return ret;
     }
 
     private static <V> boolean doCheckDuplication( //

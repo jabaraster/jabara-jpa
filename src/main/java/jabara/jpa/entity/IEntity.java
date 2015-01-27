@@ -18,8 +18,9 @@ public interface IEntity<E extends IEntity<E>> {
 
     /**
      * @return ID値.
+     * @throws IllegalStateException 永続化されていない場合.
      */
-    Id<E> getIdValue();
+    Id<E> getId();
 
     /**
      * @return 最終更新日.

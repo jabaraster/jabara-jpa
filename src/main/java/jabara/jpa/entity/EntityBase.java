@@ -106,9 +106,9 @@ public abstract class EntityBase<E extends EntityBase<E>> implements IEntity<E>,
     }
 
     /**
-     * @see jabara.jpa.entity.IEntity#getIdValue()
+     * @see jabara.jpa.entity.IEntity#getId()
      */
-    public jabara.jpa.entity.Id<E> getIdValue() {
+    public jabara.jpa.entity.Id<E> getId() {
         if (this.id == null) {
             throw new IllegalStateException("not persisted."); //$NON-NLS-1$
         }
