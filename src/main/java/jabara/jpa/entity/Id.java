@@ -6,7 +6,7 @@ import java.io.Serializable;
  * @param <E> エンティティの型.
  * @author jabaraster
  */
-public class Id<E extends IEntity<E>> implements Serializable {
+public class Id<E extends IEntity<E>> implements Serializable, Comparable<Id<E>> {
     private static final long serialVersionUID = -5635652442854282245L;
 
     private final long        value;
@@ -20,6 +20,20 @@ public class Id<E extends IEntity<E>> implements Serializable {
         this.value = pValue;
         this.hash = computeHash();
         this.toString = buildToString();
+    }
+
+    /**
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    @Override
+    public int compareTo(final Id<E> o) {
+        if (o == null) {
+            throw new NullPointerException("argument is null."); //$NON-NLS-1$
+        }
+        if (this.value == o.value) {
+            return 0;
+        }
+        return this.value < o.value ? -1 : 1;
     }
 
     /**

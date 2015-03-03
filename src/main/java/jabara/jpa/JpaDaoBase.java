@@ -55,6 +55,20 @@ public class JpaDaoBase implements Serializable {
     }
 
     /**
+     * @param pEntityType
+     * @return -
+     */
+    public long countAll(final Class<?> pEntityType) {
+        ArgUtil.checkNull(pEntityType, "pEntityType"); //$NON-NLS-1$
+        final EntityManager em = getEntityManager();
+        final CriteriaBuilder builder = em.getCriteriaBuilder();
+        final CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        final Root<?> root = query.from(pEntityType);
+        query.select(builder.count(root));
+        return em.createQuery(query).getSingleResult().longValue();
+    }
+
+    /**
      * @param pEntityType チェック対象エンティティの型.
      * @param pCheckProperty -
      * @param pValue -
